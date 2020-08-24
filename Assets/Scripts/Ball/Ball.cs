@@ -5,24 +5,13 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
-	[Header("Particle")]
-	[SerializeField] private GameObject explosionParticlePrefab;
+	[Header("GameObject")]
+	[SerializeField] private GameObject miniBallLauncher;
 
 	[Header("Component")]
 	[SerializeField] private MeshRenderer meshRenderer;
 	[SerializeField] private CircleCollider2D circleCollider2D;
 	[SerializeField] private Rigidbody2D rigidbody2D;
-	[SerializeField] private AudioSource audioSource;
-
-	[Header("Value")]
-	[Range(0f,1f)]
-	[SerializeField] private float explosionRadius;
-	[SerializeField] private float explosionForce;
-
-	[SerializeField] private LayerMask layerMask;
-
-	[Header("List")]
-	[SerializeField] private List<GameObject> miniBalls;
 
 	private void OnEnable()
 	{
@@ -60,54 +49,23 @@ public class Ball : MonoBehaviour
 	
 		if (layerNumber == LayerContants.OBSTACLE_LINE || layerNumber == LayerContants.HUMAN)
 		{
-			SpawnMiniBalls();
+			SetActiveMiniBallLauncher();
 		}
 	}
 
-	private void SpawnMiniBalls() 
+	private void SetActiveMiniBallLauncher() 
 	{
-		PrepareSelfDestruct();
+		miniBallLauncher.SetActive(true);
 
-		Instantiate(explosionParticlePrefab, transform.position, Quaternion.identity);
+		miniBallLauncher.transform.parent = null;
 
-		foreach (GameObject miniBall in miniBalls)
-		{
-			miniBall.transform.parent = null;
-
-			Vector2 direction = miniBall.transform.position - transform.position;
-
-			miniBall.SetActive(true);
-
-			miniBall.GetComponent<Rigidbody2D>().AddForce(direction * Vector3.up * explosionForce);
-		}
+		SelfDestruct();
 	}
 
-	private void PrepareSelfDestruct() 
+	private void SelfDestruct()
 	{
-		meshRenderer.enabled = false;
-		Destroy(rigidbody2D);
-		circleCollider2D.enabled = false;
-
-		StartCoroutine(SelfDestruct());
-	}
-
-	private void PlaySFX() 
-	{
-		audioSource.Play();
-	}
-
-	private IEnumerator SelfDestruct() 
-	{
-		PlaySFX();
-
-		yield return new WaitWhile(() => audioSource.isPlaying);
-
 		Destroy(gameObject);
 	}
 
-	private void OnDrawGizmosSelected()
-	{
-		Gizmos.color = Color.red;
-		Gizmos.DrawWireSphere(transform.position, explosionRadius);
-	}
+	
 }
