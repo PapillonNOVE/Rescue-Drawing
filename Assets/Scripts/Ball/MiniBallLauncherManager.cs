@@ -31,7 +31,7 @@ public class MiniBallLauncherManager : MonoBehaviour
 
 		foreach (Rigidbody2D miniBallRigidbody in miniBallRigidbodies)
 		{
-			miniBallRigidbody.transform.parent = null;
+			miniBallRigidbody.transform.SetParent(transform.parent);
 
 			Vector2 direction = miniBallRigidbody.transform.position - transform.position;
 

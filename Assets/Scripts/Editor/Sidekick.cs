@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
@@ -22,5 +20,12 @@ public class Sidekick : MonoBehaviour
     {
         ActiveEditorTracker.sharedTracker.isLocked = !ActiveEditorTracker.sharedTracker.isLocked;
         ActiveEditorTracker.sharedTracker.ForceRebuild();
+    }
+
+
+    [MenuItem("Extra Tools/Delete All PlayerPrefs %u")] // CTRL + U
+    private static void ClearPrefabs() 
+    {
+        PlayerPrefs.DeleteAll();
     }
 }

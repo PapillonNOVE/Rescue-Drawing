@@ -1,6 +1,4 @@
 ﻿using Constants;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Ball : MonoBehaviour
@@ -57,15 +55,15 @@ public class Ball : MonoBehaviour
 	{
 		miniBallLauncher.SetActive(true);
 
-		miniBallLauncher.transform.parent = null;
+		miniBallLauncher.transform.SetParent(transform.parent);
 
 		SelfDestruct();
 	}
 
 	private void SelfDestruct()
 	{
+		GeneralManager.QuittingControl(Unsubscribe);
+
 		Destroy(gameObject);
 	}
-
-	
 }

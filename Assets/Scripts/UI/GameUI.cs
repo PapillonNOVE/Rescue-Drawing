@@ -51,7 +51,7 @@ public class GameUI : MonoBehaviour
 
 	private void UpdateLevelText() 
 	{
-		levelText.SetText(EventManager.Instance.GetSavedLevel().ToString());
+		levelText.SetText(EventManager.Instance.GetSavedLevelID().ToString());
 	}
 
 	private void SetDrawLimitBarMaxValue(float currentMaxValue) 

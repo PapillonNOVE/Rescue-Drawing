@@ -1,6 +1,14 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.Events;
+
+public enum GameStates 
+{
+   Prepare,
+   GameStarted,
+   DeathTimer,
+   LevelCompleted,
+   GameOver,
+}
 
 public class GeneralManager : MonoBehaviour
 {
@@ -8,31 +16,35 @@ public class GeneralManager : MonoBehaviour
 
 	private static bool isQuitting;
 
-	public static bool isGameStarted = true;
-
-	private static bool _isGameOver;
-	public static bool IsGameOver
+	private static GameStates _gameState;
+	public static GameStates GameState
 	{
-		get => _isGameOver;
-
+		get => _gameState;
+	
 		set
 		{
-			_isGameOver = value;
+			_gameState = value;
 
-			if (_isGameOver)
+			if (_gameState == GameStates.LevelCompleted)
 			{
-				EventManager.Instance.DestroyBalls();
+				EventManager.Instance.LevelCompleted();
+			}
+			else if (_gameState == GameStates.GameOver) 
+			{
+				EventManager.Instance.GameOver();
 			}
 		}
 	}
 
-	//public static void EventNullControl(UnityAction unityAction) 
-	//{
-	//	if (EventManager.Instance.uni)
-	//	{
+	private void OnEnable()
+	{
+		ResetGameState();
+	}
 
-	//	}
-	//}
+	public static void ResetGameState() 
+	{
+		GameState = GameStates.Prepare;
+	}
 
 	public static void QuittingControl(Action targetMethod) 
 	{

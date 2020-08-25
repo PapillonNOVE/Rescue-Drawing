@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DrawManager : MonoBehaviour
 {
@@ -15,61 +16,63 @@ public class DrawManager : MonoBehaviour
     [Header("Value")]
     [Range(0f,1f)]
     [SerializeField] private float pointDistance = 1f;
-    [SerializeField] private float drawLimit;
+    [SerializeField] private float minDrawLimit;
+    [SerializeField] private float maxDrawLimit;
     [SerializeField] private float drawLenght;
 
     [SerializeField] private List<Vector2> points;
 
     float offSetZ;
     public bool canDraw;
-
-    
+    Vector3 drawStartPos;
 
 	private void Start()
 	{
         offSetZ = Mathf.Abs(transform.position.z - mainCam.transform.position.z);
-        EventManager.Instance.SetDrawLimitBarMaxValue(drawLimit);
-        EventManager.Instance.UpdateDrawLimitBar(drawLimit);
+        EventManager.Instance.SetDrawLimitBarMaxValue(maxDrawLimit);
+        EventManager.Instance.UpdateDrawLimitBar(maxDrawLimit);
 	}
 
 	private void OnEnable()
 	{
-        GeneralManager.isGameStarted = true;
+        GeneralManager.GameState = GameStates.GameStarted;
     }
 
-	private void Update()
+    private void Update()
     {
-        if (GeneralManager.isGameStarted)
+		if (GeneralManager.GameState != GameStates.GameStarted)
+		{
+            return;
+		}
+
+        if (Input.GetMouseButtonDown(0))
         {
-            if (drawLenght >= drawLimit)
-            {
-                canDraw = false;
-            }
+            StartDraw();
+        }
 
-            if (Input.GetMouseButtonDown(0))
-            {
-                StartDraw();
-            }
+        if (Input.GetMouseButton(0))
+        {
+            Draw();
+        }
 
-            if (Input.GetMouseButton(0) && canDraw)
-            {
-                Draw();
-            }
-
-            if (Input.GetMouseButtonUp(0))
-            {
-                EndDraw();
-            }
+        if (Input.GetMouseButtonUp(0))
+        {
+            EndDraw();
         }
     }
 
 	private void StartDraw() 
     {
-        //canDraw = true;
+        drawStartPos = GetMousePosition();
     }
 
     private void Draw()
     {
+        if (drawLenght > maxDrawLimit)
+        {
+            return;
+        }
+
         Vector3 currentPosition = GetMousePosition();
 
         if (points.Count > 0)
@@ -94,21 +97,32 @@ public class DrawManager : MonoBehaviour
             drawLenght = i * pointDistance;
 		}
 
-        EventManager.Instance.UpdateDrawLimitBar(drawLimit - drawLenght);
-
         lineRenderer.enabled = true;
+
+        EventManager.Instance.UpdateDrawLimitBar(maxDrawLimit - drawLenght);
     }
 
     private void EndDraw() 
     {
+        if (drawLenght < minDrawLimit)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
         canDraw = false;
 
         edgeCollider2D.points = points.ToArray();
         edgeCollider2D.enabled = true;
         rigidbody2D.bodyType = RigidbodyType2D.Dynamic;
 
-        EventManager.Instance.SetFreeBalls();
-        Human.isCountdownStarted = true;
+        EventManager.Instance.SetFreeBalls?.Invoke();
+        GeneralManager.GameState = GameStates.DeathTimer;
+    }
+
+    private float DrawDistanceCalculator()
+    {
+        Debug.Log(Vector3.Distance(drawStartPos, GetMousePosition()));
+        return Vector3.Distance(drawStartPos, GetMousePosition());
     }
 
     private Vector3 GetMousePosition() 

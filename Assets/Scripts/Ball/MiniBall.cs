@@ -54,7 +54,11 @@ public class MiniBall : MonoBehaviour
 	{
 		PlaySFX();
 
-		Instantiate(particlePrefab, transform.position, Quaternion.identity);
+		GameObject newParticle = Instantiate(particlePrefab, transform.position, Quaternion.identity);
+
+		newParticle.transform.SetParent(transform.parent);
+
+		GeneralManager.QuittingControl(Unsubscribe);
 
 		yield return new WaitWhile(() => audioSource.isPlaying);
 

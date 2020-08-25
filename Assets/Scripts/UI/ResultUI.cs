@@ -54,8 +54,7 @@ public class ResultUI : MonoBehaviour
 
 	private void OnClickAddListener()
 	{
-		//TODO: Sonraki Level´a geçmeyi sağlayacak Eventi çağır
-		//nextButton.onClick.AddListener();
+		nextButton.onClick.AddListener(() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex));
 
 		retryButton.onClick.AddListener(() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex));
 	}

@@ -8,8 +8,9 @@ public class EventManager : Singleton<EventManager>
     public UnityAction DestroyBalls;
 
     // Level
-    public Func<int> GetSavedLevel;
-    public UnityAction SaveLevel;
+    public Func<int> GetSavedLevelID;
+    public UnityAction SaveLevelID;
+    public UnityAction LoadLevel;
 
     // UI
     public UnityAction<float> SetDrawLimitBarMaxValue;

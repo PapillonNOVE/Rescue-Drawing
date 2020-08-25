@@ -3,21 +3,6 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
-	private int _level;
-	public int Level
-	{
-		get => _level;
-
-		set 
-		{
-			_level = value;
-
-			PlayerPrefs.SetInt(PlayerPrefsConstants.LEVEL, _level);
-
-			  EventManager.Instance.UpdateLevelText?.Invoke();
-		}
-	}
-
 	private void OnEnable()
 	{
 		Subscribe();
@@ -32,20 +17,19 @@ public class LevelManager : MonoBehaviour
 
 	private void Subscribe()
 	{
-		EventManager.Instance.GetSavedLevel += GetSavedLevel;
-		EventManager.Instance.SaveLevel += SaveLevel;
+		EventManager.Instance.GetSavedLevelID += GetSavedLevelID;
+		EventManager.Instance.SaveLevelID += SaveLevelID;
 	}
 
 	private void Unsubscribe()
 	{
-		EventManager.Instance.GetSavedLevel -= GetSavedLevel;
-		EventManager.Instance.SaveLevel -= SaveLevel;
+		EventManager.Instance.GetSavedLevelID -= GetSavedLevelID;
+		EventManager.Instance.SaveLevelID -= SaveLevelID;
 	}
 
 	#endregion
 
-
-	private int GetSavedLevel()
+	private int GetSavedLevelID()
 	{
 		if (PlayerPrefs.HasKey(PlayerPrefsConstants.LEVEL))
 		{
@@ -55,23 +39,9 @@ public class LevelManager : MonoBehaviour
 		return 1;
 	}
 
-	private void SaveLevel() 
+	private void SaveLevelID() 
 	{
-		PlayerPrefs.SetInt(PlayerPrefsConstants.LEVEL, GetSavedLevel() + 1);
-
-		EventManager.Instance.UpdateLevelText?.Invoke();
+		PlayerPrefs.SetInt(PlayerPrefsConstants.LEVEL, GetSavedLevelID() + 1);
 	}
-
-	//private void LevelSaveControl()
-	//{
-	//	if (PlayerPrefs.HasKey(PlayerPrefsConstants.LEVEL))
-	//	{
-	//		Level = PlayerPrefs.GetInt(PlayerPrefsConstants.LEVEL);
-	//	}
-	//	else
-	//	{
-	//		Level = 1;
-	//		PlayerPrefs.SetInt(PlayerPrefsConstants.LEVEL, Level);
-	//	}
 }
 

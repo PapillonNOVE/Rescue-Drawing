@@ -8,17 +8,14 @@ public class Human : MonoBehaviour
 	[SerializeField] private BoxCollider2D boxCollider2D;
 	[SerializeField] private Rigidbody2D rigidbody2D;
 	
-	
 	[SerializeField] private float deathTimer;
 
-	public static bool isCountdownStarted = false;
-	
 	[SerializeField] private bool _isHumanAlive;
 	public bool IsHumanAlive { get => _isHumanAlive; set => _isHumanAlive = value; }
 
 	private void Update()
 	{
-		if (isCountdownStarted)
+		if (GeneralManager.GameState == GameStates.DeathTimer)
 		{
 			deathTimer += Time.deltaTime;
 
@@ -33,7 +30,7 @@ public class Human : MonoBehaviour
 	{
 		int layerNumber = collision.gameObject.layer;
 
-		if ((layerNumber == LayerContants.BALL || layerNumber == LayerContants.MINI_BALL) && IsHumanAlive)
+		if ((layerNumber == LayerContants.BALL || layerNumber == LayerContants.MINI_BALL) && IsHumanAlive && GeneralManager.GameState == GameStates.DeathTimer)
 		{
 			IsHumanAlive = false;
 
@@ -44,11 +41,10 @@ public class Human : MonoBehaviour
 
 	private void CompleteLevel()
 	{
-		EventManager.Instance.LevelCompleted();
-		isCountdownStarted = false;
 		deathTimer = 0;
 
-		GeneralManager.IsGameOver = true;
+		EventManager.Instance.SaveLevelID();
+		GeneralManager.GameState = GameStates.LevelCompleted;
 	}
 
 	private void Die() 
@@ -58,10 +54,7 @@ public class Human : MonoBehaviour
 
 		animator.SetBool("isDead", true);
 		EventManager.Instance.GameOver();
-		isCountdownStarted = false;
 
-		GeneralManager.isGameStarted = false;
-
-		GeneralManager.IsGameOver = true;
+		GeneralManager.GameState = GameStates.GameOver;
 	}
 }
